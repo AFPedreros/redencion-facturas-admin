@@ -1,6 +1,7 @@
 "use client"
 
 import { useRef } from "react"
+import Link from "next/link"
 import { useAuth } from "@/context/auth-context"
 
 import { Button } from "@/components/ui/button"
@@ -12,7 +13,12 @@ export default function Login() {
 
   const { toast } = useToast()
 
-  const formRef = useRef<any>({ email: "", password: "" })
+  const formRef = useRef<any>({
+    email: "",
+    password: "",
+    confirmPassword: "",
+    name: "",
+  })
 
   async function handleOnSubmit(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault()
@@ -32,17 +38,20 @@ export default function Login() {
       })
       return false
     }
-
-    try {
-      await login(formRef.current.email.value, formRef.current.password.value)
-    } catch (e) {
-      console.log(e)
-      toast({
-        variant: "destructive",
-        title: "Datos incorrectos",
-        description: "Usuario o contraseña incorrecta.",
-      })
-    }
+    console.log(formRef.current.email.value)
+    console.log(formRef.current.password.value)
+    console.log(formRef.current.confirmPassword.value)
+    console.log(formRef.current.name.value)
+    // try {
+    //   await login(formRef.current.email.value, formRef.current.password.value)
+    // } catch (e) {
+    //   console.log(e)
+    //   toast({
+    //     variant: "destructive",
+    //     title: "Datos incorrectos",
+    //     description: "Usuario o contraseña incorrecta.",
+    //   })
+    // }
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -54,13 +63,19 @@ export default function Login() {
   return (
     <form className="flex min-w-[350px] flex-col justify-center gap-3">
       <div className="mb-1">
-        <h2 className="text-2xl font-semibold text-center">
-          Bienvenido de nuevo
-        </h2>
+        <h2 className="text-2xl font-semibold text-center">Crea una cuenta</h2>
         <p className="mx-auto text-sm text-center text-muted-foreground">
-          Ingresa tu correo y contraseña
+          Ingresa tus datos para crear una cuenta
         </p>
       </div>
+      <Input
+        id="name"
+        ref={(el) => (formRef.current.name = el)}
+        placeholder="Nombre"
+        type="name"
+        onKeyDown={handleKeyDown}
+        required
+      />
       <Input
         id="email"
         ref={(el) => (formRef.current.email = el)}
@@ -77,7 +92,26 @@ export default function Login() {
         onKeyDown={handleKeyDown}
         required
       />
-      <Button onClick={handleOnSubmit}>Ingresar</Button>
+      <Input
+        id="confirm-password"
+        ref={(el) => (formRef.current.confirmPassword = el)}
+        placeholder="•••••••••"
+        type="password"
+        onKeyDown={handleKeyDown}
+        required
+      />
+      <Button onClick={handleOnSubmit}>Continuar</Button>
+      <div className="flex flex-col items-center mt-1">
+        <p className="mx-auto text-sm text-center text-muted-foreground">
+          Dando click en continuar aceptas nuestros
+        </p>
+        <Link
+          className="mx-auto text-sm font-semibold border-b border-primary text-primary"
+          href="#"
+        >
+          Términos & condiciones
+        </Link>
+      </div>
     </form>
   )
 }
