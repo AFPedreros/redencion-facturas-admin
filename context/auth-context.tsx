@@ -39,7 +39,7 @@ export const AuthContextProvider = ({
     return () => unsubscribe()
   }, [])
 
-  const signup = (email: string, password: string) => {
+  const signUp = (email: string, password: string) => {
     return createUserWithEmailAndPassword(auth, email, password)
   }
 
@@ -53,7 +53,7 @@ export const AuthContextProvider = ({
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, login, signUp, logout }}>
       {loading ? null : children}
     </AuthContext.Provider>
   )

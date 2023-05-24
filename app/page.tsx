@@ -23,9 +23,9 @@ export default function IndexPage() {
   }
   return (
     <section className="container grid items-center justify-center h-screen gap-6 pt-6 pb-8 md:py-10">
-      <div className="flex w-full flex-col justify-center items-center space-y-4 sm:w-[350px]">
-        <Icons.logo className="w-9 h-9 text-primary" />
-        {!register ? <SignUp /> : <Login />}
+      <div className="flex w-full flex-col justify-center items-center sm:w-[350px]">
+        <Icons.logo className="mb-4 w-9 h-9 text-primary" />
+        {register ? <SignUp /> : <Login />}
         <div className="min-w-[350px]">
           <Separator />
           <p className="px-8 mt-1 text-sm text-center text-muted-foreground">

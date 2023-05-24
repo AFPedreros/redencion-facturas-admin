@@ -3,13 +3,22 @@
 import { useRef } from "react"
 import Link from "next/link"
 import { useAuth } from "@/context/auth-context"
+import { doc, setDoc } from "firebase/firestore"
 
+import { db } from "@/lib/fiebase"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/components/ui/use-toast"
 
+interface FormData {
+  email: string
+  password: string
+  confirmPassword: string
+  name: string
+}
+
 export default function Login() {
-  const { login } = useAuth()
+  const { signUp } = useAuth()
 
   const { toast } = useToast()
 
@@ -20,8 +29,35 @@ export default function Login() {
     name: "",
   })
 
+  async function handleRegistration({ email, password }: FormData) {
+    try {
+      await signUp(email, password)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  async function handleCreateClient({ email, name }: FormData) {
+    try {
+      await setDoc(doc(db, "clients", email), {
+        email: email,
+        name: name,
+      })
+      console.log("Cliente creado")
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
   async function handleOnSubmit(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault()
+
+    const data: FormData = {
+      email: formRef.current.email.value,
+      password: formRef.current.password.value,
+      confirmPassword: formRef.current.confirmPassword.value,
+      name: formRef.current.name.value,
+    }
 
     if (!formRef.current.email.value) {
       toast({
@@ -38,20 +74,8 @@ export default function Login() {
       })
       return false
     }
-    console.log(formRef.current.email.value)
-    console.log(formRef.current.password.value)
-    console.log(formRef.current.confirmPassword.value)
-    console.log(formRef.current.name.value)
-    // try {
-    //   await login(formRef.current.email.value, formRef.current.password.value)
-    // } catch (e) {
-    //   console.log(e)
-    //   toast({
-    //     variant: "destructive",
-    //     title: "Datos incorrectos",
-    //     description: "Usuario o contraseña incorrecta.",
-    //   })
-    // }
+    handleCreateClient(data)
+    handleRegistration(data)
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -61,8 +85,8 @@ export default function Login() {
   }
 
   return (
-    <form className="flex min-w-[350px] flex-col justify-center gap-3">
-      <div className="mb-1">
+    <form className="min-w-[350px] space-y-2 justify-center">
+      <div>
         <h2 className="text-2xl font-semibold text-center">Crea una cuenta</h2>
         <p className="mx-auto text-sm text-center text-muted-foreground">
           Ingresa tus datos para crear una cuenta
@@ -100,9 +124,12 @@ export default function Login() {
         onKeyDown={handleKeyDown}
         required
       />
-      <Button onClick={handleOnSubmit}>Continuar</Button>
-      <div className="flex flex-col items-center mt-1">
-        <p className="mx-auto text-sm text-center text-muted-foreground">
+
+      <Button className="w-full" onClick={handleOnSubmit}>
+        Continuar
+      </Button>
+      <div className="text-center">
+        <p className="mx-auto text-sm text-muted-foreground">
           Dando click en continuar aceptas nuestros
         </p>
         <Link
